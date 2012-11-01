@@ -49,12 +49,15 @@
             });
 
             function getAuthorizeUrl(loginUrl, clientId, redirectUri){
+
+                alert('getAuthorizeUrl');
                 return loginUrl+'services/oauth2/authorize?display=touch'
                     +'&response_type=token&client_id='+escape(clientId)
                     +'&redirect_uri='+escape(redirectUri);
             }
 
             function sessionCallback(loc) {
+                alert('sessionCallback');
                 var oauthResponse = {};
 
                 var fragment = loc.split("#")[1];
