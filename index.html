@@ -20,71 +20,74 @@
             // Now safe to use the PhoneGap API
             console.log('phonegap ready to use');
             alert('phonegap ready to use');
-        }
 
-    </script>
-    <script type="text/javascript">
+            // OAuth Configuration
+            var loginUrl    = 'https://login.salesforce.com/';
+            var clientId    = '3MVG98XJQQAccJQeEL1KLBnfwOwQef6waxmKVofVR9fyboki1tEfZBIGUxxekqrH.jdWeANPvKWUr.mCVQZE5';
+            var redirectUri = 'https://login.salesforce.com/services/oauth2/success';
 
-        // OAuth Configuration
-        var loginUrl    = 'https://login.salesforce.com/';
-        var clientId    = '3MVG98XJQQAccJQeEL1KLBnfwOwQef6waxmKVofVR9fyboki1tEfZBIGUxxekqrH.jdWeANPvKWUr.mCVQZE5';
-        var redirectUri = 'https://login.salesforce.com/services/oauth2/success';
+            var client = new forcetk.Client(clientId, loginUrl);
 
-        var client = new forcetk.Client(clientId, loginUrl);
+            $(document).ready(function() {
 
-        $(document).ready(function() {
-            var cb = ChildBrowser.install();
+                alert('Document ready');
+                console.log('Document ready');
+                var cb = ChildBrowser.install();
 
-            $('#message').click(function(e) {
-                e.preventDefault();
-                cb.onLocationChange = function(loc){
-                    if (loc.startsWith(redirectUri)) {
-                        cb.close();
-                        sessionCallback(unescape(loc));
-                    }
-                };
-                cb.showWebPage(getAuthorizeUrl(loginUrl, clientId, redirectUri));
+                $('#message').click(function(e) {
+                    alert('Button clicked');
+                    console.log('Button clicked');
+                    e.preventDefault();
+                    cb.onLocationChange = function(loc){
+                        if (loc.startsWith(redirectUri)) {
+                            cb.close();
+                            sessionCallback(unescape(loc));
+                        }
+                    };
+                    cb.showWebPage(getAuthorizeUrl(loginUrl, clientId, redirectUri));
+                });
             });
-        });
 
-        function getAuthorizeUrl(loginUrl, clientId, redirectUri){
-            return loginUrl+'services/oauth2/authorize?display=touch'
-                +'&response_type=token&client_id='+escape(clientId)
-                +'&redirect_uri='+escape(redirectUri);
-        }
+            function getAuthorizeUrl(loginUrl, clientId, redirectUri){
+                return loginUrl+'services/oauth2/authorize?display=touch'
+                    +'&response_type=token&client_id='+escape(clientId)
+                    +'&redirect_uri='+escape(redirectUri);
+            }
 
-        function sessionCallback(loc) {
-            var oauthResponse = {};
+            function sessionCallback(loc) {
+                var oauthResponse = {};
 
-            var fragment = loc.split("#")[1];
+                var fragment = loc.split("#")[1];
 
-            if (fragment) {
-                var nvps = fragment.split('&');
-                for (var nvp in nvps) {
-                    var parts = nvps[nvp].split('=');
-                    oauthResponse[parts[0]] = unescape(parts[1]);
+                if (fragment) {
+                    var nvps = fragment.split('&');
+                    for (var nvp in nvps) {
+                        var parts = nvps[nvp].split('=');
+                        oauthResponse[parts[0]] = unescape(parts[1]);
+                    }
+                }
+
+                if (typeof oauthResponse === 'undefined'
+                    || typeof oauthResponse['access_token'] === 'undefined') {
+                    errorCallback({
+                                  status: 0,
+                                  statusText: 'Unauthorized',
+                                  responseText: 'No OAuth response'
+                                  });
+                } else {
+                    client.setSessionToken(oauthResponse.access_token, null,
+                        oauthResponse.instance_url);
+
+                    client.query("SELECT Name FROM Account LIMIT 1",
+                        function(response){
+                            $('#message').html('The first account I see is '
+                            +response.records[0].Name);
+                        }
+                    );
                 }
             }
-
-            if (typeof oauthResponse === 'undefined'
-                || typeof oauthResponse['access_token'] === 'undefined') {
-                errorCallback({
-                              status: 0,
-                              statusText: 'Unauthorized',
-                              responseText: 'No OAuth response'
-                              });
-            } else {
-                client.setSessionToken(oauthResponse.access_token, null,
-                    oauthResponse.instance_url);
-
-                client.query("SELECT Name FROM Account LIMIT 1",
-                    function(response){
-                        $('#message').html('The first account I see is '
-                        +response.records[0].Name);
-                    }
-                );
-            }
         }
+
     </script>
     <p id="message">Click here.</p>
 </html>
