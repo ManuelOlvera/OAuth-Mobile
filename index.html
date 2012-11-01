@@ -32,13 +32,15 @@
 
                 alert('Document ready');
                 console.log('Document ready');
-                var cb = ChildBrowser.install();
+                var cb = new ChildBrowser();
 
                 $('#message').click(function(e) {
                     alert('Button clicked');
                     console.log('Button clicked');
                     e.preventDefault();
                     cb.onLocationChange = function(loc){
+                        alert('onlocationchange');
+                        console.log('onlocationchange');
                         if (loc.startsWith(redirectUri)) {
                             cb.close();
                             sessionCallback(unescape(loc));
