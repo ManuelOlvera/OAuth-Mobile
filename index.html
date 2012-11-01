@@ -1,0 +1,90 @@
+<html>
+  <head>
+    <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="js/forcetk.js"></script>
+    <script type="text/javascript" src="phonegap.js"></script>
+    <script type="text/javascript" src="js/childbrowser.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+        // Call onDeviceReady when PhoneGap is loaded.
+        //
+        // At this point, the document has loaded but phonegap-1.0.0.js has not.
+        // When PhoneGap is loaded and talking with the native device,
+        // it will call the event `deviceready`.
+        //
+        document.addEventListener("deviceready", onDeviceReady, false);
+
+        // PhoneGap is loaded and it is now safe to make calls PhoneGap methods
+        //
+        function onDeviceReady() {
+            // Now safe to use the PhoneGap API
+            console.log('phonegap ready to use');
+            alert('phonegap ready to use');
+        }
+
+    </script>
+    <script type="text/javascript">
+
+        // OAuth Configuration
+        var loginUrl    = 'https://login.salesforce.com/';
+        var clientId    = '3MVG98XJQQAccJQeEL1KLBnfwOwQef6waxmKVofVR9fyboki1tEfZBIGUxxekqrH.jdWeANPvKWUr.mCVQZE5';
+        var redirectUri = 'https://login.salesforce.com/services/oauth2/success';
+
+        var client = new forcetk.Client(clientId, loginUrl);
+
+        $(document).ready(function() {
+            var cb = ChildBrowser.install();
+
+            $('#message').click(function(e) {
+                e.preventDefault();
+                cb.onLocationChange = function(loc){
+                    if (loc.startsWith(redirectUri)) {
+                        cb.close();
+                        sessionCallback(unescape(loc));
+                    }
+                };
+                cb.showWebPage(getAuthorizeUrl(loginUrl, clientId, redirectUri));
+            });
+        });
+
+        function getAuthorizeUrl(loginUrl, clientId, redirectUri){
+            return loginUrl+'services/oauth2/authorize?display=touch'
+                +'&response_type=token&client_id='+escape(clientId)
+                +'&redirect_uri='+escape(redirectUri);
+        }
+
+        function sessionCallback(loc) {
+            var oauthResponse = {};
+
+            var fragment = loc.split("#")[1];
+
+            if (fragment) {
+                var nvps = fragment.split('&');
+                for (var nvp in nvps) {
+                    var parts = nvps[nvp].split('=');
+                    oauthResponse[parts[0]] = unescape(parts[1]);
+                }
+            }
+
+            if (typeof oauthResponse === 'undefined'
+                || typeof oauthResponse['access_token'] === 'undefined') {
+                errorCallback({
+                              status: 0,
+                              statusText: 'Unauthorized',
+                              responseText: 'No OAuth response'
+                              });
+            } else {
+                client.setSessionToken(oauthResponse.access_token, null,
+                    oauthResponse.instance_url);
+
+                client.query("SELECT Name FROM Account LIMIT 1",
+                    function(response){
+                        $('#message').html('The first account I see is '
+                        +response.records[0].Name);
+                    }
+                );
+            }
+        }
+    </script>
+    <p id="message">Click here.</p>
+</html>
