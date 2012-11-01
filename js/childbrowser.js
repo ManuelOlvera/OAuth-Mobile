@@ -24,6 +24,7 @@ var ChildBrowser = (function (gap) {
      * Function called when the child browser has an event.
      */
     function onEvent(data) {
+        alert('onEvent');
         switch (data.type) {
             case CLOSE_EVENT:
                 if (isFunction(ChildBrowser.onClose)) {
@@ -31,8 +32,10 @@ var ChildBrowser = (function (gap) {
                 }
                 break;
             case LOCATION_CHANGED_EVENT:
+                alert('almost location event');
                 if (isFunction(ChildBrowser.onLocationChange)) {
                     ChildBrowser.onLocationChange(data.location);
+                    alert('inside location event');
                 }
                 break;
             case OPEN_EXTERNAL_EVENT:
@@ -67,6 +70,8 @@ var ChildBrowser = (function (gap) {
      * @param options       An object that specifies additional options
      */
     ChildBrowser.showWebPage = function (url, options) {
+
+        alert('showWebPage');
         if (!options) {
             options = { showLocationBar: true };
         }

@@ -34,6 +34,8 @@
                 console.log('Document ready');
                 var cb = new ChildBrowser();
 
+                console.log(cb);
+
                 $('#message').click(function(e) {
                     alert('Button clicked');
                     console.log('Button clicked');
@@ -46,7 +48,8 @@
                             sessionCallback(unescape(loc));
                         }
                     };
-                    cb.showWebPage(getAuthorizeUrl(loginUrl, clientId, redirectUri));
+                    var url = getAuthorizeUrl(loginUrl, clientId, redirectUri);
+                    cb.showWebPage(url);
                 });
             });
 
@@ -92,6 +95,10 @@
                 }
             }
         }
+
+        var cb = new ChildBrowser();
+
+                console.log(cb);
 
     </script>
     <p id="message">Click here.</p>
