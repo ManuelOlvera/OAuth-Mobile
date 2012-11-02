@@ -18,6 +18,4 @@
 	<preference name="prerendered-icon" value="true" />
 	<preference name="webviewbounce" value="false"/>
 
-	<gap:plugin name="ChildBrowser" /> <!-- latest release -->
-
 </widget>
