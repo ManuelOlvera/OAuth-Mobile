@@ -5,12 +5,14 @@
 
 function ChildBrowser() {
   // Does nothing
+  alert('ChildBrowser');
 }
 
 // Callback when the location of the page changes
 // called from native
 ChildBrowser._onLocationChange = function(newLoc)
 {
+  alert('_onLocationChange');
   window.plugins.childBrowser.onLocationChange(newLoc);
 };
 
@@ -18,6 +20,7 @@ ChildBrowser._onLocationChange = function(newLoc)
 // called from native
 ChildBrowser._onClose = function()
 {
+  alert('_onClose');
   window.plugins.childBrowser.onClose();
 };
 
@@ -25,6 +28,7 @@ ChildBrowser._onClose = function()
 // called from native
 ChildBrowser._onOpenExternal = function()
 {
+  alert('_onOpenExternal')
   window.plugins.childBrowser.onOpenExternal();
 };
 
@@ -34,6 +38,7 @@ ChildBrowser._onOpenExternal = function()
 // called from native
 ChildBrowser._onJSCallback = function(js,loc)
 {
+  alert('_onJSCallback');
   // Not Implemented
   //window.plugins.childBrowser.onJSCallback(js,loc);
 };
@@ -43,9 +48,10 @@ ChildBrowser._onJSCallback = function(js,loc)
 // Show a webpage, will result in a callback to onLocationChange
 ChildBrowser.prototype.showWebPage = function(loc,geolocationEnabled)
 {
+  alert('showWebPage');
   var success = function(msg)
   {
-     console.log("ChildBrowser.showWebPage success :: " + msg);
+     alert("ChildBrowser.showWebPage success :: " + msg);
 
         var event = JSON.parse(msg);
 
@@ -56,7 +62,7 @@ ChildBrowser.prototype.showWebPage = function(loc,geolocationEnabled)
 
   var error = function(e)
   {
-     console.log("ChildBrowser.showWebPage error :: " + e);
+     alert("ChildBrowser.showWebPage error :: " + e);
   };
 
   var options =
@@ -73,12 +79,14 @@ ChildBrowser.prototype.showWebPage = function(loc,geolocationEnabled)
 // close the browser, will NOT result in close callback
 ChildBrowser.prototype.close = function()
 {
+  alert('close');
   PhoneGap.exec(null,null,"ChildBrowserCommand","close");
 };
 
 // Not Implemented
 ChildBrowser.prototype.jsExec = function(jsString)
 {
+  alert('jsExec');
   // Not Implemented!!
   //PhoneGap.exec("ChildBrowserCommand.jsExec",jsString);
 };
@@ -87,6 +95,7 @@ ChildBrowser.prototype.jsExec = function(jsString)
 // it will be returned, and also available globally from window.plugins.childBrowser
 ChildBrowser.install = function()
 {
+  alert('install');
   if(!window.plugins) {
     window.plugins = {};
   }
