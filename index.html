@@ -32,7 +32,7 @@
                 alert('document ready');
                 var cb = ChildBrowser.install();
                 alert('childbrowser install');
-                $('#login').click(function(e) {
+                $('#message').click(function(e) {
                     e.preventDefault();
                     alert('clicked');
                     cb.onLocationChange = function(loc){
