@@ -32,74 +32,69 @@
 
                 alert('Document ready');
                 console.log('Document ready');
-                var cb = ChildBrowser;
+                    var client = new forcetk.Client(clientId, loginUrl);
 
-                console.log(cb);
+        $(document).ready(function() {
+            var cb = ChildBrowser.install();
 
-                $('#message').click(function(e) {
-                    alert('Button clicked');
-                    console.log('Button clicked');
-                    e.preventDefault();
-                    cb.onLocationChange = function(loc){
-                        alert('onlocationchange');
-                        console.log('onlocationchange');
-                        if (loc.startsWith(redirectUri)) {
-                            cb.close();
-                            sessionCallback(unescape(loc));
-                        }
-                    };
-                    var url = getAuthorizeUrl(loginUrl, clientId, redirectUri);
-                    cb.showWebPage(url);
-                });
-            });
+                alert('childbrowser installed');
+            $('#message').click(function(e) {
+                e.preventDefault();
 
-            function getAuthorizeUrl(loginUrl, clientId, redirectUri){
+                alert('clicked');
+                cb.onLocationChange = function(loc){
 
-                alert('getAuthorizeUrl');
-                return loginUrl+'services/oauth2/authorize?display=touch'
-                    +'&response_type=token&client_id='+escape(clientId)
-                    +'&redirect_uri='+escape(redirectUri);
-            }
-
-            function sessionCallback(loc) {
-                alert('sessionCallback');
-                var oauthResponse = {};
-
-                var fragment = loc.split("#")[1];
-
-                if (fragment) {
-                    var nvps = fragment.split('&');
-                    for (var nvp in nvps) {
-                        var parts = nvps[nvp].split('=');
-                        oauthResponse[parts[0]] = unescape(parts[1]);
+                    alert('location changed');
+                    if (loc.startsWith(redirectUri)) {
+                        cb.close();
+                        sessionCallback(unescape(loc));
                     }
-                }
+                };
+                cb.showWebPage(getAuthorizeUrl(loginUrl, clientId, redirectUri));
+            });
+        });
 
-                if (typeof oauthResponse === 'undefined'
-                    || typeof oauthResponse['access_token'] === 'undefined') {
-                    errorCallback({
-                                  status: 0,
-                                  statusText: 'Unauthorized',
-                                  responseText: 'No OAuth response'
-                                  });
-                } else {
-                    client.setSessionToken(oauthResponse.access_token, null,
-                        oauthResponse.instance_url);
+        function getAuthorizeUrl(loginUrl, clientId, redirectUri){
 
-                    client.query("SELECT Name FROM Account LIMIT 1",
-                        function(response){
-                            $('#message').html('The first account I see is '
-                            +response.records[0].Name);
-                        }
-                    );
-                }
-            }
+                alert('get url');
+            return loginUrl+'services/oauth2/authorize?display=touch'
+                +'&response_type=token&client_id='+escape(clientId)
+                +'&redirect_uri='+escape(redirectUri);
         }
 
-        var cb = new ChildBrowser();
+        function sessionCallback(loc) {
+            alert('callback');
+            var oauthResponse = {};
 
-                console.log(cb);
+            var fragment = loc.split("#")[1];
 
+            if (fragment) {
+                var nvps = fragment.split('&');
+                for (var nvp in nvps) {
+                    var parts = nvps[nvp].split('=');
+                    oauthResponse[parts[0]] = unescape(parts[1]);
+                }
+            }
+
+            if (typeof oauthResponse === 'undefined'
+                || typeof oauthResponse['access_token'] === 'undefined') {
+                errorCallback({
+                              status: 0,
+                              statusText: 'Unauthorized',
+                              responseText: 'No OAuth response'
+                              });
+            } else {
+                client.setSessionToken(oauthResponse.access_token, null,
+                    oauthResponse.instance_url);
+
+                client.query("SELECT Name FROM Account LIMIT 1",
+                    function(response){
+                        $('#message').html('The first account I see is '
+                        +response.records[0].Name);
+                    }
+                );
+            }
+        }
     </script>
     <p id="message">Click here.</p>
 </html>
