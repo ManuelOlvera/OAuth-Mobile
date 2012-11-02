@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<widget xmlns		= "http://www.w3.org/ns/widgets"
+	xmlns:gap	= "http://phonegap.com/ns/1.0"
+	id		= "com.phonegap.KIO"
+	version 	= "0.0.1">
+
+	<name>OAuth Phone</name>
+
+	<description>
+		OAuth Phone
+	</description>
+
+	<author href="http://www.makepositive.com" email="manuel.olvera@makepositive.com">
+		MANUEL OLVERA @ Makepositive
+	</author>
+
+	<preference name="phonegap-version" value="2.0.0" />
+	<preference name="prerendered-icon" value="true" />
+	<preference name="webviewbounce" value="false"/>
+
+	<gap:plugin name="ChildBrowser" /> <!-- latest release -->
+
+</widget>
