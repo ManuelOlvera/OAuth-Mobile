@@ -12,6 +12,8 @@
         function onDeviceReady() {
 
             // Now safe to use the PhoneGap API
+            console.log('phonegap ready to use');
+            alert('phonegap ready to use');
 
             // OAuth Configuration
             var loginUrl    = 'https://login.salesforce.com/';
@@ -21,13 +23,18 @@
 
             $(document).ready(function() {
 
+                alert('document ready');
+
                 $('#message').click(function(e) {
 
                     // e.preventDefault();
+
                     window.plugins.childBrowser.onLocationChange = function (loc) {
 
                         if (loc.startsWith( redirectUri )) {
+
                             window.plugins.childBrowser.close();
+
                             sessionCallback(unescape(loc));
                         }
                     };
@@ -37,14 +44,16 @@
             });
 
             function getAuthorizeUrl(loginUrl, clientId, redirectUri){
+                alert('getAuthorizeUrl');
                 return loginUrl+'services/oauth2/authorize?display=touch'
                     +'&response_type=token&client_id='+escape(clientId)
                     +'&redirect_uri='+escape(redirectUri);
             }
 
             function sessionCallback(loc) {
-
+                alert('sessionCallback');
                 var oauthResponse = {};
+
                 var fragment = loc.split("#")[1];
 
                 if (fragment) {
