@@ -4,59 +4,47 @@
     <script type="text/javascript" src="js/forcetk.js"></script>
     <script src="phonegap.js"></script>
     <script type="text/javascript" src="js/childbrowser.js"></script>
+
     <script type="text/javascript" charset="utf-8">
 
-        // Call onDeviceReady when PhoneGap is loaded.
-        //
-        // At this point, the document has loaded but phonegap-1.0.0.js has not.
-        // When PhoneGap is loaded and talking with the native device,
-        // it will call the event `deviceready`.
-        //
-        document.addEventListener("deviceready", onDeviceReady, false);
+        document.addEventListener( "deviceready" , onDeviceReady, false);
 
-        // PhoneGap is loaded and it is now safe to make calls PhoneGap methods
-        //
         function onDeviceReady() {
+
             // Now safe to use the PhoneGap API
-            console.log('phonegap ready to use');
-            alert('phonegap ready to use');
 
             // OAuth Configuration
             var loginUrl    = 'https://login.salesforce.com/';
             var clientId    = '3MVG98XJQQAccJQeEL1KLBnfwOwQef6waxmKVofVR9fyboki1tEfZBIGUxxekqrH.jdWeANPvKWUr.mCVQZE5';
             var redirectUri = 'https://login.salesforce.com/services/oauth2/success';
-
             var client = new forcetk.Client(clientId, loginUrl);
 
             $(document).ready(function() {
-                alert('document ready');
-                var cb = ChildBrowser.install();
-                alert('childbrowser install');
+
                 $('#message').click(function(e) {
-                    e.preventDefault();
-                    alert('clicked');
-                    cb.onLocationChange = function(loc){
-                        alert('onLocationChange');
-                        if (loc.startsWith(redirectUri)) {
-                            cb.close();
+
+                    // e.preventDefault();
+                    window.plugins.childBrowser.onLocationChange = function (loc) {
+
+                        if (loc.startsWith( redirectUri )) {
+                            window.plugins.childBrowser.close();
                             sessionCallback(unescape(loc));
                         }
                     };
-                    cb.showWebPage(getAuthorizeUrl(loginUrl, clientId, redirectUri), false);
+
+                    window.plugins.childBrowser.showWebPage( getAuthorizeUrl(loginUrl, clientId, redirectUri), false);
                 });
             });
 
             function getAuthorizeUrl(loginUrl, clientId, redirectUri){
-                alert('getAuthorizeUrl');
                 return loginUrl+'services/oauth2/authorize?display=touch'
                     +'&response_type=token&client_id='+escape(clientId)
                     +'&redirect_uri='+escape(redirectUri);
             }
 
             function sessionCallback(loc) {
-                alert('sessionCallback');
-                var oauthResponse = {};
 
+                var oauthResponse = {};
                 var fragment = loc.split("#")[1];
 
                 if (fragment) {
